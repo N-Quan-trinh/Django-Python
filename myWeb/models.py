@@ -42,7 +42,7 @@ class UserAccount(models.Model):
     UserName = models.CharField(max_length=100)
     Password = models.CharField(max_length=10)
     email = models.EmailField(default=None)
-    RealName = models.CharField(max_length=50, default='N/A')
+    RealName = models.CharField(max_length=50)
 
     def __str__(self):
         return self.UserName

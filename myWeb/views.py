@@ -24,25 +24,34 @@ def modelTest(request):
 
 
 def AccountLogin(request):
-    Error = "Please enter your user name"
+    Error = False
+    loginSub = 'loginSubmit'
+    registerSub = 'registerSubmit'
     if request.method == 'POST':
-        LoginForm = ModelLogin(request.POST)
-        if LoginForm.is_valid():
-            username = LoginForm.cleaned_data['UserName']
-            password = LoginForm.cleaned_data['Password']
-            for x in UserInfo:
-                if username == x.UserName and password == x.Password:
-                    return HttpResponseRedirect('admin/')
-                else:
-                    Error = 'We were unable to find your username'
-
+        if loginSub in request.POST:
+            loginAccount = ModelLogin(request.POST)
+            if loginAccount.is_valid():
+                loginName = loginAccount.cleaned_data["UserName"]
+                loginPass = loginAccount.cleaned_data["Password"]
+                for x in UserInfo:
+                    if x.UserName == loginName and x.Password == loginPass:
+                        return HttpResponseRedirect("/admin")
+                    else:
+                        Error = True
+        elif registerSub in request.POST:
+            registerAccount = ModelRegister(request.POST)
+            if registerAccount.is_valid():
+                registerAccount.save()
+                return HttpResponseRedirect("/admin")
     else:
-        LoginForm = ModelLogin()
-    return render(request, 'Hello.html', {'form': LoginForm, 'Error': Error})
+        loginAccount = ModelLogin()
+        registerAccount = ModelRegister()
+
+    return render(request, 'Hello.html', {'form': loginAccount, 'RegForm': registerAccount, 'error': Error})
 
 
 def AccountRegister(request):
-    if request == 'POST':
+    if request.method == 'POST':
         RegisterAccount = ModelRegister(request.POST)
         if RegisterAccount.is_valid():
             RegisterAccount.save()
